@@ -49,7 +49,7 @@ y sobre las dinámicas socioeconómicas locales.
 
 │   ├── graficos/                                            # Figuras generadas (PNG)
 
-│   │   └── publicación/                                     # Figuras a 300 dpi para publicación
+│   │   └── publicacion/                                     # Figuras a 300 dpi para publicación
 
 │   ├── tablas/
 
