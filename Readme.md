@@ -1,6 +1,4 @@
-\# Análisis Climático Histórico — Estación Meteorológica Colonia Benítez (1968–2024)
-
-
+# Análisis Climático Histórico — Estación Meteorológica Colonia Benítez (1968–2024)
 
 Análisis estadístico de la serie histórica de la Estación Meteorológica Convencional (EMC)
 
@@ -10,15 +8,9 @@ local a través de indicadores de temperatura, precipitación, heliofanía y eva
 
 potencial, con énfasis en la detección de tendencias y eventos extremos.
 
+---
 
-
-\---
-
-
-
-\## Contexto
-
-
+## Contexto
 
 En Colonia Benítez los primeros registros climáticos corresponden a mediciones pluviométricas
 
@@ -30,23 +22,16 @@ aproximadamente 54 años efectivos de observaciones continuas (1968–2024, excl
 
 por registros incompletos).
 
-
-
 El objetivo es aportar información cuantitativa que reduzca la incertidumbre asociada al
 
 impacto del clima sobre los sistemas productivos —particularmente agricultura y ganadería—
 
 y sobre las dinámicas socioeconómicas locales.
 
+---
 
+## Estructura del repositorio
 
-\---
-
-
-
-\## Estructura del repositorio
-
-```
 
 ├── data/
 
@@ -76,57 +61,35 @@ y sobre las dinámicas socioeconómicas locales.
 
 └── README.md
 
-```
+---
 
+## Datos
 
-
-\---
-
-
-
-\## Datos
-
-
-
-Los datos fueron obtenidos del \*\*Sistema de Información y Gestión Agrometeorológica del INTA\*\*
+Los datos fueron obtenidos del **Sistema de Información y Gestión Agrometeorológica del INTA**
 
 (SIGA): https://siga.inta.gob.ar
 
+**Variables analizadas:**
 
+- Temperatura media, máxima y mínima diaria (abrigo meteorológico, 150 cm)
 
-\*\*Variables analizadas:\*\*
+- Precipitación pluviométrica diaria
 
-\- Temperatura media, máxima y mínima diaria (abrigo meteorológico, 150 cm)
+- Heliofanía efectiva (horas de radiación solar directa)
 
-\- Precipitación pluviométrica diaria
+- Evapotranspiración potencial (ETP)
 
-\- Heliofanía efectiva (horas de radiación solar directa)
+**Período:** 1968–2024 (años 2021, 2022 y 2023 excluidos por registros incompletos)
 
-\- Evapotranspiración potencial (ETP)
+---
 
+## Requisitos
 
+- **R** versión 4.5.1 o superior
 
-\*\*Período:\*\* 1968–2024 (años 2021, 2022 y 2023 excluidos por registros incompletos)
+- **RStudio** 2025.09.1+401 "Cucumberleaf Sunflower" (recomendado)
 
-
-
-\---
-
-
-
-\## Requisitos
-
-
-
-\- \*\*R\*\* versión 4.5.1 o superior
-
-\- \*\*RStudio\*\* 2025.09.1+401 "Cucumberleaf Sunflower" (recomendado)
-
-
-
-\### Paquetes R necesarios
-
-```r
+### Paquetes R necesarios
 
 install.packages(c(
 
@@ -138,69 +101,47 @@ install.packages(c(
 
 ))
 
-```
+---
 
+## Uso
 
+1. Clonar el repositorio
 
-\---
+2. Colocar el archivo de datos en la carpeta data/
 
+3. Colocar el archivo logo.png en la carpeta source/ (opcional — el script funciona sin logo)
 
+4. Abrir source/analisis\_climatico\_FINAL.R en RStudio
 
-\## Uso
+5. Ajustar RUTA\_ARCHIVO en la Sección 2 si es necesario
 
+6. Ejecutar el script completo
 
+Los resultados se generan automáticamente en docs/graficos/ y docs/tablas/.
 
-1\. Clonar el repositorio
+---
 
-2\. Colocar el archivo de datos en la carpeta `data/`
-
-3\. Colocar el archivo `logo.png` en la carpeta `source/` (opcional — el script funciona sin logo)
-
-4\. Abrir `source/analisis\_climatico\_FINAL.R` en RStudio
-
-5\. Ajustar `RUTA\_ARCHIVO` en la Sección 2 si es necesario
-
-6\. Ejecutar el script completo
-
-
-
-Los resultados se generan automáticamente en `docs/graficos/` y `docs/tablas/`.
-
-
-
-\---
-
-
-
-\## Resultados generados
-
-
+## Resultados generados
 
 | Archivo | Contenido |
 
 |---|---|
 
-| `docs/graficos/01\_temperatura.png` | Panel de temperatura histórica |
+| docs/graficos/01\_temperatura.png | Panel de temperatura histórica |
 
-| `docs/graficos/02\_precipitacion\_extremos.png` | Panel de precipitación y eventos extremos |
+| docs/graficos/02\_precipitacion\_extremos.png | Panel de precipitación y eventos extremos |
 
-| `docs/graficos/03\_patrones.png` | Patrones, intensificación y correlaciones |
+| docs/graficos/03\_patrones.png | Patrones, intensificación y correlaciones |
 
-| `docs/graficos/04\_heatmap.png` | Heatmap climático mensual |
+| docs/graficos/04\_heatmap.png | Heatmap climático mensual |
 
-| `docs/graficos/publicacion/Fig01–Fig12` | Figuras individuales a 300 dpi |
+| docs/graficos/publicacion/Fig01–Fig12 | Figuras individuales a 300 dpi |
 
-| `docs/tablas/Resumen\_Climatico\_Completo.xlsx` | 10 hojas con todos los resultados |
+| docs/tablas/Resumen\_Climatico\_Completo.xlsx | 10 hojas con todos los resultados |
 
+---
 
-
-\---
-
-
-
-\## Nota metodológica
-
-
+## Nota metodológica
 
 Los años 2021, 2022 y 2023 fueron excluidos del análisis por presentar registros incompletos
 
@@ -210,17 +151,11 @@ Los valores de esos años se ubican entre 5 y 15 desviaciones estándar por deba
 
 media histórica, descartando su carácter como variabilidad climática real.
 
-Se mantienen como `NA` en la Tabla T10 (heliofanía y ETP) para transparencia del registro.
+Se mantienen como NA en la Tabla T10 (heliofanía y ETP) para transparencia del registro.
 
+---
 
-
-\---
-
-
-
-\## Asistencia de IA
-
-
+## Asistencia de IA
 
 La optimización y depuración del código R, así como la redacción de descripciones de tablas
 
@@ -230,33 +165,20 @@ El análisis estadístico, la interpretación de los resultados y las conclusion
 
 exclusiva responsabilidad del autor.
 
+---
 
+## Autor
 
-\---
-
-
-
-\## Autor
-
-
-
-\*\*Alejandro Juan Eda\*\*
+**Alejandro Juan Marcelo Leandro**
 
 Estación Experimental Agropecuaria Colonia Benítez — INTA
 
 Chaco, Argentina
 
+---
 
-
-\---
-
-
-
-\## Fuente de datos
-
-
+## Fuente de datos
 
 INTA — Sistema de Información y Gestión Agrometeorológica (SIGA)
 
 https://siga.inta.gob.ar
-
