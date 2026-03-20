@@ -11,7 +11,7 @@ potencial, con énfasis en la detección de tendencias y eventos extremos.
 
 En Colonia Benítez los primeros registros climáticos corresponden a mediciones pluviométricas
 iniciadas en 1925. En 1968 se estableció la EMC, permitiendo ampliar la cobertura de variables
-observadas. La serie analizada comprende más de 20.000 registros diarios y abarca
+observadas. La serie analizada comprende más de 19.000 registros diarios y abarca
 aproximadamente 54 años efectivos de observaciones continuas (1968–2024, excluyendo 2021–2023
 por registros incompletos).
 
@@ -78,7 +78,7 @@ install.packages(c(
 
 1. Clonar el repositorio
 2. Colocar el archivo de datos en la carpeta `data/`
-3. Colocar el archivo `logo.png` en la carpeta `docs/` (opcional — el script funciona sin logo)
+3. Colocar el archivo `logo.png` en la carpeta del script (opcional — el script funciona sin logo)
 4. Abrir `source/Analisis_climatico_Serie_1968-2024.R` en RStudio
 5. Ajustar `RUTA_ARCHIVO` en la Sección 2 si es necesario
 6. Ejecutar el script completo
