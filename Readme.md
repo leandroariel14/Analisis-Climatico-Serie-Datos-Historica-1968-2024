@@ -35,13 +35,13 @@ y sobre las dinámicas socioeconómicas locales.
 
 ├── data/
 
-│   └── Serie\_Historica\_Varios\_Instrumentos1968-012025.xls   # Datos fuente (SIGA-INTA)
+│   Instrumentos1968-012025.xls   # Datos fuente (SIGA-INTA)
 
 │
 
 ├── source/
 
-│   └── analisis\_climatico\_FINAL.R                           # Script principal de análisis
+│   Analisis_climatico_Serie_1968-2024.R                           # Script principal de análisis
 
 │
 
@@ -49,13 +49,13 @@ y sobre las dinámicas socioeconómicas locales.
 
 │   ├── graficos/                                            # Figuras generadas (PNG)
 
-│   │   └── publicacion/                                     # Figuras a 300 dpi para publicación
+│   │   └── publicación/                                     # Figuras a 300 dpi para publicación
 
 │   ├── tablas/
 
 │   │   └── Resumen\_Climatico\_Completo.xlsx                  # Tablas de resultados (T1–T10)
 
-│   └── Publicación\_Alejandro\_Juan\_Eda.docx                  # Documento de publicación
+│   └── publicación                 # Documento de publicación
 
 │
 
