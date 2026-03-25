@@ -21,9 +21,7 @@ library(ggridges)
 library(openxlsx)
 library(cowplot)
 library(magick)
-# =============================================================================
-# Creación directorios o carpetas donde se guarda los resultados
-# =============================================================================
+
 dir.create("graficos",             showWarnings = FALSE)
 dir.create("graficos/publicacion", showWarnings = FALSE)
 dir.create("tablas",               showWarnings = FALSE)
@@ -42,9 +40,7 @@ CAPTION_BASE <- "Fuente: Estación Meteorológica Colonia Benítez | Datos diari
 # 2023: solo 122/365 días registrados (año truncado)
 # La exclusión afecta todas las variables para mantener consistencia metodológica
 ANIOS_EXCLUIR <- c(2021, 2022, 2023)
-# =============================================================================
-# Se puede cambiar los colores
-# =============================================================================
+
 colores_era <- c(
   "1968-1989" = "#4575b4",
   "1990-2009" = "#fdae61",
@@ -89,7 +85,7 @@ LOGO <- tryCatch(
 # Función global de guardado
 # El logo se agrega automáticamente en TODOS los gráficos
 # -----------------------------------------------------------------------------
-guardar <- function(plot, ruta, ancho, alto, dpi = 150) {
+guardar <- function(plot, ruta, ancho, alto, dpi = 300) {
   if (!is.null(LOGO)) {
     p_final <- ggdraw(plot) +
       draw_image(LOGO,
@@ -238,6 +234,40 @@ mk_test(anual$Year, anual$Dias_P99,          "Días P99")
 mk_test(anual$Year, anual$Precip_Max_Diaria, "Máx. Diaria")
 mk_test(anual$Year, anual$Racha_Seca_Max,    "Racha Seca Máxima")
 mk_test(anual$Year, anual$Dias_Calor_Ext,    "Días calor extremo (>=35°C)")
+
+# --- Tabla exportable de Mann-Kendall (mismos cálculos, sin modificar mk_test) ---
+mk_tabla <- function(x, y, nombre) {
+  mk  <- mk.test(y)
+  sen <- sens.slope(y)
+  pval <- mk$p.value
+  data.frame(
+    Variable      = nombre,
+    Pendiente_Sen = round(as.numeric(sen$estimates), 4),
+    tau           = round(as.numeric(mk$estimates["tau"]), 3),
+    p_valor       = round(pval, 4),
+    Sig           = ifelse(pval < 0.001, "***",
+                    ifelse(pval < 0.010, "**",
+                    ifelse(pval < 0.050, "*",
+                    ifelse(pval <= 0.100, "~", "")))),
+    stringsAsFactors = FALSE
+  )
+}
+
+tabla_mk <- rbind(
+  mk_tabla(anual$Year, anual$Temp_Media_Anual,  "Temp. media anual (°C/año)"),
+  mk_tabla(anual$Year, anual$Temp_Max_Media,    "Temp. máx. media (°C/año)"),
+  mk_tabla(anual$Year, anual$Temp_Min_Media,    "Temp. mín. media (°C/año)"),
+  mk_tabla(anual$Year, anual$Precip_Total,      "Precipitación total (mm/año)"),
+  mk_tabla(anual$Year, anual$Dias_Lluvia,       "Días con lluvia (días/año)"),
+  mk_tabla(anual$Year, anual$Intensidad_Media,  "Intensidad media (mm/d/año)"),
+  mk_tabla(anual$Year, anual$Dias_P95,          "Días P95 (días/año)"),
+  mk_tabla(anual$Year, anual$Dias_P99,          "Días P99 (días/año)"),
+  mk_tabla(anual$Year, anual$Precip_Max_Diaria, "Precip. máx. diaria (mm/año)"),
+  mk_tabla(anual$Year, anual$Racha_Seca_Max,    "Racha seca máx. CDD (días/año)"),
+  mk_tabla(anual$Year, anual$Dias_Calor_Ext,    "Días calor extremo >=35°C (días/año)"),
+  mk_tabla(anual$Year, anual$Dias_Helada,       "Días helada (días/año)")
+)
+cat("✔ tabla_mk lista para exportar\n")
 
 
 # =============================================================================
@@ -566,9 +596,20 @@ p10 <- ggplot(anual, aes(x = Precip_Total, y = Temp_Media_Anual, color = Year)) 
     aes(label = Year), vjust = -0.8, size = 3, fontface = "bold"
   ) +
   scale_color_gradient2(
-    low = "#4575b4", mid = "#ffffbf", high = "#d73027",
-    midpoint = 1996, name = "Año"
+    low      = "#4575b4",
+    mid      = "#ffffbf",
+    high     = "#d73027",
+    midpoint = 1996,
+    name     = "Año",
+    breaks   = seq(1970, 2020, by = 10),
+    labels   = seq(1970, 2020, by = 10)
   ) +
+  guides(color = guide_colorbar(
+    barwidth       = unit(6, "cm"),
+    barheight      = unit(0.4, "cm"),
+    title.position = "top",
+    title.hjust    = 0.5
+  )) +
   labs(
     title    = "Temperatura vs Precipitación Anual",
     subtitle = paste0("r = ", round(cor(anual$Temp_Media_Anual, anual$Precip_Total,
@@ -700,10 +741,10 @@ panel_heatmap <- p12 +
 guardar(panel_heatmap, "graficos/04_heatmap.png", ancho = 16, alto = 10)
 
 cat("\n--- Guardando gráficos individuales ---\n")
-guardar(p3,  "graficos/05_regresion_temperatura.png",  ancho = 14, alto = 7,  dpi = 180)
-guardar(p9,  "graficos/06_extremos_mensuales.png",     ancho = 12, alto = 6,  dpi = 180)
-guardar(p11, "graficos/07_ridge_distribucion.png",     ancho = 12, alto = 6,  dpi = 180)
-guardar(p6,  "graficos/08_dias_lluvia_intensidad.png", ancho = 12, alto = 10, dpi = 180)
+guardar(p3,  "graficos/05_regresion_temperatura.png",  ancho = 14, alto = 7)
+guardar(p9,  "graficos/06_extremos_mensuales.png",     ancho = 12, alto = 6)
+guardar(p11, "graficos/07_ridge_distribucion.png",     ancho = 12, alto = 6)
+guardar(p6,  "graficos/08_dias_lluvia_intensidad.png", ancho = 12, alto = 10)
 
 cat("\n✔ Gráficos guardados en ./graficos/\n")
 
@@ -899,6 +940,29 @@ tabla_helio_etp <- df %>%
 
 agregar_hoja(wb, "T10_Heliofania_ETP", tabla_helio_etp,
              "Totales anuales de heliofanía efectiva (hs/año) y evapotranspiración potencial (mm/año) | 2021-2023 excluidos por registros incompletos")
+# --- T10b: Descriptivos de Heliofanía y ETP (base de Tabla 4 del manuscrito) ---
+tabla_helio_etp_desc <- tabla_helio_etp %>%
+  filter(is.na(Nota) | Nota == "") %>%          # excluye los años NA
+  summarise(
+    across(
+      c(Heliofania_Total_hs, ETP_Total_mm),
+      list(
+        Media   = ~round(mean(.,   na.rm = TRUE), 1),
+        DE      = ~round(sd(.,     na.rm = TRUE), 1),
+        Minimo  = ~round(min(.,    na.rm = TRUE), 1),
+        P25     = ~round(quantile(., 0.25, na.rm = TRUE), 1),
+        Mediana = ~round(median(., na.rm = TRUE), 1),
+        P75     = ~round(quantile(., 0.75, na.rm = TRUE), 1),
+        Maximo  = ~round(max(.,    na.rm = TRUE), 1)
+      )
+    )
+  )
+
+agregar_hoja(wb, "T10b_Helio_ETP_Desc", tabla_helio_etp_desc,
+             "Estadísticos descriptivos de heliofanía y ETP — base de Tabla 4 del manuscrito")
+
+agregar_hoja(wb, "T11_MannKendall", tabla_mk,
+             "Mann-Kendall + pendiente de Sen — variables anuales principales | ~ p<=0.10 | * p<0.05 | ** p<0.01 | *** p<0.001")
 
 saveWorkbook(wb, file = "tablas/Resumen_Climatico_Completo.xlsx", overwrite = TRUE)
 cat("\n✔ Tablas guardadas en: tablas/Resumen_Climatico_Completo.xlsx (T1 a T10)\n")
@@ -920,24 +984,49 @@ guardar_pub <- function(plot, nombre, ancho_mm = 180, alto_mm = 120) {
   )
 }
 
+# -----------------------------------------------------------------------------
+# Exportación vectorial PDF (sin logo — para maquetación editorial)
+# -----------------------------------------------------------------------------
+dir.create("graficos/publicacion/pdf", showWarnings = FALSE)
+
+guardar_pub_pdf <- function(plot, nombre, ancho_mm = 180, alto_mm = 120) {
+  ggsave(
+    filename = file.path("graficos", "publicacion", "pdf", paste0(nombre, ".pdf")),
+    plot     = plot,
+    width    = ancho_mm / 25.4,
+    height   = alto_mm  / 25.4,
+    device   = "pdf"
+  )
+  cat(sprintf("  ✔ PDF: %s\n", nombre))
+}
+
 cat("\n--- Exportando figuras para publicación ---\n")
 
-guardar_pub(p1,  "Fig01_anomalia_temperatura",                      ancho_mm = 180, alto_mm = 110)
-guardar_pub(p2,  "Fig02_temperatura_max_min",                       ancho_mm = 180, alto_mm = 110)
-guardar_pub(p3,  "Fig03_regresion_temperatura",                     ancho_mm = 360, alto_mm = 130)
-guardar_pub(p4,  "Fig04_precipitacion_anual",                       ancho_mm = 180, alto_mm = 110)
-guardar_pub(p5,  "Fig05_dias_extremos_P95_P99",                     ancho_mm = 180, alto_mm = 110)
-guardar_pub(p6,  "Fig06_paradoja_intensificacion",                  ancho_mm = 180, alto_mm = 160)
-guardar_pub(p7,  "Fig07_CDD_rachas_secas",                          ancho_mm = 180, alto_mm = 110)
-guardar_pub(p8,  "Fig08_RX1day_RX5day",                             ancho_mm = 180, alto_mm = 110)
-guardar_pub(p9,  "Fig09_extremos_mensuales_por_era",                ancho_mm = 360, alto_mm = 120)
-guardar_pub(p10, "Fig10_scatter_temp_vs_precip",                    ancho_mm = 180, alto_mm = 140)
-guardar_pub(p11, "Fig11_ridgeplot_distribucion",                    ancho_mm = 180, alto_mm = 120)
-guardar_pub(p12, "Fig12_heatmap_mensual_temperatura_precipitacion", ancho_mm = 360, alto_mm = 200)
+figuras_pub <- list(
+  list(p = p1,  n = "Fig01_anomalia_temperatura",                      w = 180, h = 110),
+  list(p = p2,  n = "Fig02_temperatura_max_min",                       w = 180, h = 110),
+  list(p = p3,  n = "Fig03_regresion_temperatura",                     w = 360, h = 130),
+  list(p = p4,  n = "Fig04_precipitacion_anual",                       w = 180, h = 110),
+  list(p = p5,  n = "Fig05_dias_extremos_P95_P99",                     w = 180, h = 110),
+  list(p = p6,  n = "Fig06_paradoja_intensificacion",                  w = 180, h = 160),
+  list(p = p7,  n = "Fig07_CDD_rachas_secas",                          w = 180, h = 110),
+  list(p = p8,  n = "Fig08_RX1day_RX5day",                             w = 180, h = 110),
+  list(p = p9,  n = "Fig09_extremos_mensuales_por_era",                w = 360, h = 120),
+  list(p = p10, n = "Fig10_scatter_temp_vs_precip",                    w = 180, h = 140),
+  list(p = p11, n = "Fig11_ridgeplot_distribucion",                    w = 180, h = 120),
+  list(p = p12, n = "Fig12_heatmap_mensual_temperatura_precipitacion", w = 360, h = 200)
+)
+
+cat("  → PNG 300 DPI (con logo):\n")
+for (f in figuras_pub) guardar_pub(f$p, f$n, ancho_mm = f$w, alto_mm = f$h)
+
+cat("  → PDF vectorial (sin logo — para maquetación editorial):\n")
+for (f in figuras_pub) guardar_pub_pdf(f$p, f$n, ancho_mm = f$w, alto_mm = f$h)
 
 cat("\n✔ Figuras guardadas en graficos/publicacion/\n")
-cat("  Resolución: 300 dpi — apta para publicación científica\n")
-cat("  Formatos: 180mm (1 columna) y 360mm (2 columnas)\n")
+cat("  PNG 300 dpi (con logo) → graficos/publicacion/*.png\n")
+cat("  PDF vectorial (sin logo) → graficos/publicacion/pdf/*.pdf\n")
+cat("  Anchos: 180 mm (1 columna) y 360 mm (2 columnas)\n")
 
 # =============================================================================
 #                               * FIN *
