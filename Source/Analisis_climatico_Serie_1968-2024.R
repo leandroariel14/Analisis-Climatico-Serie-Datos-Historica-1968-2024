@@ -523,7 +523,7 @@ p6b <- ggplot(anual, aes(x = Year, y = Intensidad_Media)) +
 
 p6 <- p6a / p6b +
   plot_annotation(
-    title    = "Intensificación: ¿Menos Días pero más Intensos?",
+    title    = "Intensificación: Menos Días pero más Intensos",
     subtitle = "La lluvia se concentra en menos episodios de mayor intensidad",
     caption  = CAPTION_BASE,
     theme    = theme(plot.title = element_text(face = "bold", size = 13))
