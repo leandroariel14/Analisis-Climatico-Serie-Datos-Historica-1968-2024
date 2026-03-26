@@ -502,7 +502,7 @@ p5 <- anual %>%
   ) +
   theme_clima
 
-# --- G6: Paradoja menos días más intensidad ---
+# --- G6: Paradoja menos días más intensidad (Versión mejorada) ---
 p6a <- ggplot(anual, aes(x = Year, y = Dias_Lluvia)) +
   geom_col(fill = "steelblue", alpha = 0.6, width = 0.9) +
   geom_smooth(method = "lm", se = TRUE, color = "steelblue4",
@@ -521,13 +521,21 @@ p6b <- ggplot(anual, aes(x = Year, y = Intensidad_Media)) +
        x = "Año", y = "mm / día lluvioso") +
   theme_clima
 
-p6 <- p6a / p6b +
+# Crear el gráfico compuesto con patchwork
+p6 <- (p6a / p6b) +
   plot_annotation(
     title    = "Intensificación: Menos Días pero más Intensos",
     subtitle = "La lluvia se concentra en menos episodios de mayor intensidad",
     caption  = CAPTION_BASE,
-    theme    = theme(plot.title = element_text(face = "bold", size = 13))
+    theme    = theme(
+      plot.title = element_text(face = "bold", size = 13),
+      plot.subtitle = element_text(color = "gray40", size = 10),
+      plot.caption = element_text(color = "gray55", size = 8, hjust = 0)
+    )
   )
+
+# Aplicar el tema a todos los componentes del patchwork
+p6 <- p6 & theme_clima
 
 # --- G7: CDD rachas secas ---
 p7 <- ggplot(indices_etccdi, aes(x = Year, y = CDD)) +
